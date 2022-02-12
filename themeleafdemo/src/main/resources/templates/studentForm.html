@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>Student Data</title>
+</head>
+<body>
+	<!--${student} is used for mapping a model student-->
+	<form th:action="@{/saveStudent}" th:object="${student}" method="post">	
+		Name: <input type="text" th:field="*{name}"/> <!--Mapping which attribute of student model is attached-->
+		Score: <input type="text"  th:field="*{score}"/>
+		<input type="submit" value="Save"/>
+		<input type="reset" value="Reset"/>
+	</form>
+</body>
+</html>
