@@ -24,7 +24,7 @@ public class ProductController {
 		return productRepository.findAll();
 	}
 	
-	@GetMapping("/products/{id}")
+	@GetMapping("/product/{id}")
 	public Product getProducts(@PathVariable("id") int id){
 		return productRepository.findById(id).get();
 	}
