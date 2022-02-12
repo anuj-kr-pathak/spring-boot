@@ -2,7 +2,11 @@ package com.anuj.springboot.productrestapi.controller;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +29,10 @@ public class ProductController {
 	}
 	
 	@GetMapping("/product/{id}")
+	//read only is true when we are caching select query
+	//cacheable is accepting the name of cache for which we has created config
+	@Transactional(readOnly = true)
+	@Cacheable("product-cache")
 	public Product getProducts(@PathVariable("id") int id){
 		return productRepository.findById(id).get();
 	}
@@ -39,6 +47,8 @@ public class ProductController {
 		return productRepository.save(product);
 	}
 
+	//CacheEvict is used to delete data from cache
+	@CacheEvict("product-cache")
 	@RequestMapping(value="/products/{id}",method=RequestMethod.DELETE)
 	public void deleteProduct(@PathVariable("id") int id) {
 		productRepository.deleteById(id);
