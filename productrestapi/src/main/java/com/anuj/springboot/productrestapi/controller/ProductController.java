@@ -17,12 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 import com.anuj.springboot.productrestapi.model.Product;
 import com.anuj.springboot.productrestapi.repos.ProductRepository;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
+@Tag(name="Product Rest Endpoints")
+//@Hidden used to hide controller class for swagger-UI
+//if want to hide method then you have to just add @Hidden annotation
+//@Hidden
 public class ProductController {
 
 	@Autowired
 	ProductRepository productRepository;
 	
+	//@Hidden
 	@GetMapping("/products")
 	public List<Product> getProducts(){
 		return productRepository.findAll();
@@ -33,7 +44,8 @@ public class ProductController {
 	//cacheable is accepting the name of cache for which we has created config
 	@Transactional(readOnly = true)
 	@Cacheable("product-cache")
-	public Product getProducts(@PathVariable("id") int id){
+	@Operation(summary = "Return a product",description = "Takes Id return single product")
+	public @ApiResponse(description = "Return a Product") Product getProducts(@Parameter(description = "Id of product") @PathVariable("id") int id){
 		return productRepository.findById(id).get();
 	}
 	
