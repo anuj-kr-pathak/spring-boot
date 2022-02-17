@@ -6,6 +6,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /*Serializable is implemented by Entity for cache feature*/
 
@@ -17,8 +20,12 @@ public class Product implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	//@NotNull shows that name cann't be Null in product object in controller.
+	@NotNull
 	private String name;
+	@Size(max = 100)
 	private String description;
+	@Min(value = 1,message = "Minimum value should be 1")
 	private int price;
 	
 	public int getId() {

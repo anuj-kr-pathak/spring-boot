@@ -2,6 +2,7 @@ package com.anuj.springboot.productrestapi.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -54,8 +55,9 @@ public class ProductController {
 		return productRepository.save(product);
 	}
 	
+	//@Valid  annotation is used to check all validation we have defined on Object field.
 	@RequestMapping(value="/products/",method=RequestMethod.POST)
-	public Product createProduct(@RequestBody Product product) {
+	public Product createProduct(@Valid @RequestBody Product product) {
 		return productRepository.save(product);
 	}
 
