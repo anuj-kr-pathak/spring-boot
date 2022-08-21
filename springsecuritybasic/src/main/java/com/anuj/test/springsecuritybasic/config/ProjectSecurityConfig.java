@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -44,35 +45,35 @@ public class ProjectSecurityConfig {
         return (SecurityFilterChain) http.build();
     }
 
-    @Bean
+/*    @Bean
     public UserDetailsService userDetailsService(DataSource dataSource){
         return new JdbcUserDetailsManager(dataSource);
-    }
+    }*/
 
-    @Bean
+/*    @Bean
     public InMemoryUserDetailsManager userDetailsService(){
 
         InMemoryUserDetailsManager userDetailService = new InMemoryUserDetailsManager();
-        /*
+        *//*
             Approach 1 where we use withDefaultPasswordEncoder() is deprecated
-         */
-        /*
+         *//*
+        *//*
             Approach 2 where we don't define while creating but using bean passwordEncoder
-         */
+         *//*
 
         UserDetails admin = User.withUsername("admin").password("12345").authorities("admin").build();
         UserDetails user = User.withUsername("user").password("12345").authorities("read").build();
         userDetailService.createUser(admin);
         userDetailService.createUser(user);
         return userDetailService;
-    }
+    }*/
 
     /*
     always use for non prod env
      */
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 
 }
