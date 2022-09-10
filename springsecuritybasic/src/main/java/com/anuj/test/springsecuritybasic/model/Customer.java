@@ -1,13 +1,46 @@
 package com.anuj.test.springsecuritybasic.model;
 import javax.persistence.*;
+import java.util.Date;
+
 @Entity
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="customer_id")
     private long id;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    private String name;
     private String email;
+    @Column(name="mobile_number")
+    private String mobile;
     private String pwd;
     private String role;
+    @Column(name="create_dt")
+    private Date date;
 
     public long getId() {
         return id;

@@ -19,7 +19,7 @@ public class AccountTransactions {
     private long accountNumber;
 
     @Column(name = "customer_id")
-    private int customerId;
+    private long customerId;
 
     @Column(name="transaction_dt")
     private Date transactionDt;
@@ -55,11 +55,11 @@ public class AccountTransactions {
         this.accountNumber = accountNumber;
     }
 
-    public int getCustomerId() {
+    public long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(long customerId) {
         this.customerId = customerId;
     }
 

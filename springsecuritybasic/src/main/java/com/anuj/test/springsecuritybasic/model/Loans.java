@@ -19,7 +19,7 @@ public class Loans {
     private int loanNumber;
 
     @Column(name = "customer_id")
-    private int customerId;
+    private long customerId;
 
     @Column(name="start_dt")
     private Date startDt;
@@ -47,11 +47,11 @@ public class Loans {
         this.loanNumber = loanNumber;
     }
 
-    public int getCustomerId() {
+    public long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(long customerId) {
         this.customerId = customerId;
     }
 
