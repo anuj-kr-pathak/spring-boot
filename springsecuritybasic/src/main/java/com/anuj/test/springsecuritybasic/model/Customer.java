@@ -1,11 +1,13 @@
 package com.anuj.test.springsecuritybasic.model;
+import lombok.Data;
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Data
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="customer_id")
     private long id;
 
