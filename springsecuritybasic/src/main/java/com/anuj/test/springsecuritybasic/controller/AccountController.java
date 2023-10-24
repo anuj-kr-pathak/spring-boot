@@ -14,7 +14,7 @@ public class AccountController {
     @Autowired
     private AccountsRepository accountsRepository;
 
-    @PostMapping("/myAccount")
+    @GetMapping("/myAccount")
     public Accounts getAccountDetails(@RequestBody Customer customer) {
         Accounts accounts = accountsRepository.findByCustomerId(customer.getId());
         if (accounts != null ) {
