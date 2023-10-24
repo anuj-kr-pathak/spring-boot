@@ -1,5 +1,6 @@
 package com.anuj.test.springsecuritybasic.config;
 
+import com.anuj.test.springsecuritybasic.model.Authority;
 import com.anuj.test.springsecuritybasic.model.Customer;
 import com.anuj.test.springsecuritybasic.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -34,13 +36,24 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         List<Customer> customerList = customerRepository.findByEmail(username);
         if(customerList.size()>0){
             if(passwordEncoder.matches(pwd,customerList.get(0).getPwd())){
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(customerList.get(0).getRole()));
-                return new UsernamePasswordAuthenticationToken(username,pwd,authorities);
+//                List<GrantedAuthority> authorities = new ArrayList<>();
+//                authorities.add(new SimpleGrantedAuthority(customerList.get(0).getRole()));
+//                return new UsernamePasswordAuthenticationToken(username,pwd,authorities);
+                return new UsernamePasswordAuthenticationToken(username,pwd,getGrantedAuthorities(customerList.get(0).getAuthorities()));
+
             } else
                 throw new BadCredentialsException("Invalid password");
         } else
             throw new BadCredentialsException("No user registered with this details ");
+    }
+
+
+    private List<GrantedAuthority> getGrantedAuthorities(Set<Authority> authorities){
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for(Authority authority : authorities){
+            grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
+        }
+        return grantedAuthorities;
     }
 
     @Override
