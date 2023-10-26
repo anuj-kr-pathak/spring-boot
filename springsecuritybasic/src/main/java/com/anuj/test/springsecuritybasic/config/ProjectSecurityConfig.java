@@ -1,6 +1,8 @@
 package com.anuj.test.springsecuritybasic.config;
 
+import com.anuj.test.springsecuritybasic.filter.AuthoritiesLoggingAfterFilter;
 import com.anuj.test.springsecuritybasic.filter.CsrfCookieFilter;
+import com.anuj.test.springsecuritybasic.filter.RequestValidationBeforeFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -54,7 +56,8 @@ public class ProjectSecurityConfig {
                 //telling we have spring security we have filter for cookie storage and save
                 //execute csrfCookieFilter after basic authenticationFilter
                 .and().addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-
+                .addFilterBefore(new RequestValidationBeforeFilter(),BasicAuthenticationFilter.class)
+                .addFilterAfter(new AuthoritiesLoggingAfterFilter(),BasicAuthenticationFilter.class)
                     //authorization by default on in build authorization
 //                .authorizeHttpRequests( (auth) -> auth
 //                        .antMatchers("/myAccount","/myBalance","/myLoans","/myCards","/user").authenticated()
