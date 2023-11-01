@@ -1,11 +1,8 @@
 package com.anuj.test.springsecuritybasic.config;
 
-import com.anuj.test.springsecuritybasic.filter.AuthoritiesLoggingAfterFilter;
-import com.anuj.test.springsecuritybasic.filter.CsrfCookieFilter;
-import com.anuj.test.springsecuritybasic.filter.RequestValidationBeforeFilter;
+import com.anuj.test.springsecuritybasic.filter.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
@@ -24,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -35,8 +33,12 @@ public class ProjectSecurityConfig {
         //Custom Configuration for flow ..
         http
                 //create a jessionid and share with UI so every time Ui sends jessionid as well otherwise we have to enter cred for all secured apis
-                .securityContext().requireExplicitSave(false)
-                .and().sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                //below one used for default  jwt generate and validate process
+//                .securityContext().requireExplicitSave(false)
+//                .and().sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                //custom generate jwt token and validate them
+                //off default jsession jwttoken
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .cors().configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
@@ -45,6 +47,8 @@ public class ProjectSecurityConfig {
                         config.setAllowedMethods(Collections.singletonList("*"));
                        config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
+                        //expose authorization token in response header so that chrome  can understand in authorization token has jwt token
+                        config.setExposedHeaders(Arrays.asList("Authorization"));
                         config.setMaxAge(3600L);
                         return config;
                     }
@@ -58,6 +62,10 @@ public class ProjectSecurityConfig {
                 .and().addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new RequestValidationBeforeFilter(),BasicAuthenticationFilter.class)
                 .addFilterAfter(new AuthoritiesLoggingAfterFilter(),BasicAuthenticationFilter.class)
+                //add jwt filter to create a jwt token
+                .addFilterAfter(new JWTTokenGeneratorFilter(),BasicAuthenticationFilter.class)
+                //add jwt validate filter
+                .addFilterBefore(new JWTTokenValidatorFilter(),BasicAuthenticationFilter.class)
                     //authorization by default on in build authorization
 //                .authorizeHttpRequests( (auth) -> auth
 //                        .antMatchers("/myAccount","/myBalance","/myLoans","/myCards","/user").authenticated()
