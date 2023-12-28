@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,6 +30,9 @@ public class ProjectSecurityConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
+
+        JwtAuthenticationConverter jwtAuthenticationConverter =  new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRoleConverter());
 
         //Custom Configuration for flow ..
         http
@@ -60,12 +64,12 @@ public class ProjectSecurityConfig {
                 //telling we have spring security we have filter for cookie storage and save
                 //execute csrfCookieFilter after basic authenticationFilter
                 .and().addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new RequestValidationBeforeFilter(),BasicAuthenticationFilter.class)
-                .addFilterAfter(new AuthoritiesLoggingAfterFilter(),BasicAuthenticationFilter.class)
+ //               .addFilterBefore(new RequestValidationBeforeFilter(),BasicAuthenticationFilter.class)
+ //               .addFilterAfter(new AuthoritiesLoggingAfterFilter(),BasicAuthenticationFilter.class)
                 //add jwt filter to create a jwt token
-                .addFilterAfter(new JWTTokenGeneratorFilter(),BasicAuthenticationFilter.class)
+//                .addFilterAfter(new JWTTokenGeneratorFilter(),BasicAuthenticationFilter.class)
                 //add jwt validate filter
-                .addFilterBefore(new JWTTokenValidatorFilter(),BasicAuthenticationFilter.class)
+ //               .addFilterBefore(new JWTTokenValidatorFilter(),BasicAuthenticationFilter.class)
                     //authorization by default on in build authorization
 //                .authorizeHttpRequests( (auth) -> auth
 //                        .antMatchers("/myAccount","/myBalance","/myLoans","/myCards","/user").authenticated()
@@ -96,7 +100,9 @@ public class ProjectSecurityConfig {
                                 .antMatchers("/myCards").hasRole("MANAGER")
                                 .antMatchers("/user").authenticated()
                                 .antMatchers("/notices","/contacts","/register").permitAll()
-                                .and().formLogin().and().httpBasic();
+                                .and()
+                                //.formLogin().and().httpBasic();
+                                .oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -140,9 +146,10 @@ public class ProjectSecurityConfig {
     /*
     always use for non prod env
      */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    //deleting it is handled by keyclock
+    //@Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 }

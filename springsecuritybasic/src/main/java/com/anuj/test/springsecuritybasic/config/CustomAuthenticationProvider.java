@@ -17,8 +17,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+//deleting we are perform the authentication of my end user to perform authentication with help of database
+//@Component
 
-@Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired

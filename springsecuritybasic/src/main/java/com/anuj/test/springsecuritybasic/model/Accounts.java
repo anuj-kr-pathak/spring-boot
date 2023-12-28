@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class Accounts {
 
     @Column(name = "customer_id")
-    private int customerId;
+    private Long customerId;
     @Column(name="account_number")
     @Id
     private long accountNumber;
@@ -21,10 +21,10 @@ public class Accounts {
     private String createDt;
 
 
-    public int getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
     public long getAccountNumber() {
