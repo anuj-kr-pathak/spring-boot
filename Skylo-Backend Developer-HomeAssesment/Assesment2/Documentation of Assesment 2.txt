@@ -1,0 +1,83 @@
+                                    Documentation of Assesment 2:
+
+
+High-Level Design and Approach:
+    1. Directory Scanning and File Detection:
+        We will use a scheduler to scan the /inputs/ directory every 30 seconds for new files. This will be achieved using Spring's @Scheduled annotation.
+        The service will pick up any new file that hasn’t been processed yet.
+    2. File Parsing:
+        Each file consists of three sections: a header, an input variable section, and a SIM record section.
+        The service will parse the SIM record section to extract the IMSI numbers and other related information for each SIM.
+    3. Data Validation and Persistence:
+        During file processing:
+        If an IMSI value is found that already exists in the database, the processing will be marked as failed.
+        If duplicate IMSI values are found within the same file, it will also be marked as failed.
+        The service will persist each valid SIM record into the SQL database.
+    4. Output File Generation:
+        After processing, the service will generate an output file in the /outputs/ directory:
+        If the file is processed successfully, a file named <input_filename>.ok will be created.
+        If there is an error during processing, a <input_filename>.nok file will be generated.
+    5. Database Schema and Handling Changes:
+        The service will use a relational database, such as MySQL or PostgreSQL.
+        Schema changes (e.g., adding new columns to the SIM table) will be handled through database migration tools such as Liquibase or Flyway.
+
+Implementation Details:
+    Spring Batch Configuration:
+        We will configure Spring Batch to process each input file as a batch job.
+        The job will have steps to:
+            1.Read the file.
+            2.Process and validate each record.
+            3.Persist valid records into the database.
+            4.Write an output file with the .ok or .nok extension depending on the result.
+    Job Steps:
+        1.ItemReader: A custom file reader will be implemented to read and parse the input files.
+        2.ItemProcessor: The processor will handle validation:
+            Check for duplicate records in the file.
+            Check if the SIM record already exists in the database.
+        3.ItemWriter: Valid records will be written to the database using a Spring Data JPA repository.
+        4.Job Listener: A listener will generate the .ok or .nok output file after the job completion.
+    Scheduler Configuration:
+        Spring's @Scheduled(fixedRate = 30000) will be used to periodically invoke the file scanning mechanism every 30 seconds.
+
+Key Classes and Components:
+    FileScannerService:
+        Responsible for scanning the /inputs/ direcItemrds.
+    SIMDataProcessor:
+        Processes each SIM record, validates against the database, and checks for duplicates.
+    SIMDataWriter(Beam):
+        Writes valid SIM data into the SQL database.
+    SIMDataJobListener:
+        Creates the .ok or .nok file after processing, based on success or failure.
+    
+
+Handling Database Schema Changes:
+    Use a database migration tool like Flyway or Liquibase for seamless schema updates.
+    Any changes to the database schema (e.g., new columns or tables) will be managed using versioned migration scripts, allowing the service to evolve without downtime.
+
+Example Input and Output:
+
+Output Files:
+If processed successfully: /outputs/sim_data1.ok
+If errors during processing: /outputs/sim_data1.nok
+
+Additional Considerations:
+
+    Error Handling:
+        If a file fails to process, a .nok file is generated with a detailed error message.
+        Logs are maintained for tracking processing issues.
+
+    Performance:
+
+        File processing should be completed within a few minutes, depending on file size and database interaction time.
+    
+    Concurrency:
+
+        If multiple files are dropped into the input folder, the service will process them sequentially, or multiple batch jobs can be configured to handle parallel processing.
+
+This design ensures robust file scanning, processing, and error handling using Spring Batch and a scheduled task, with clear separation of concerns for file reading, processing, and writing.
+
+
+
+
+
+

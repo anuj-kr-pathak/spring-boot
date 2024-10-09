@@ -1,0 +1,72 @@
+Document Of Assesment-1
+Overview
+   This documentation describes a microservices architecture involving three microservices where:
+   Producer Microservice:
+   Expose one post method to push data in kafka consumer with topic name "SKYLO"
+   Caller Mircoservice :
+      consumes messages from a queue (using Kafka on topic name SKYLO) and forwards the same data to Microservice-2 via a POST API call.
+      implements a retry mechanism to ensure that messages are not lost and are eventually delivered to Called Microservice, even if it is temporarily down.
+   Called Microservice: 
+      exposed one post api which return simple string message 
+
+Key Components
+   Caller Mircoservice(Consumer)
+      Consumes messages from a Kafka queue.
+      Posts the consumed data to Microservice-2.
+      Implements a retry mechanism if the POST API call fails.
+   Called Microservice: (Provider)
+      Exposes a POST API to receive data from Microservice-1.
+   Kafka
+      Used as a message broker to ensure the first-in, first-out (FIFO) queuing policy.
+
+
+Producer MicroService:
+   URL: localhost:9091/api/create?key=key&message=skylo testing
+   publish message in topic 'SKYLO' with particular key.
+    
+
+
+Caller MicroService:
+    
+   Configuration:
+      Kaka:
+         In applcation.properties set kafka url and consumer configuration like(value-serializer,key-serializer,auto-offset-reset) 
+         '''
+          spring:
+            kafka:
+               bootstrap-servers: localhost:9092
+               consumer:
+                  auto-offset-reset: earliest
+                  key-serializer: org.apache.kafka.common.serialization.StringSerializer
+                  value-serializer: org.apache.kafka.common.serialization.StringSerializer
+         ''' 
+http://localhost:9096/service/called/api/retry?message=message
+      Aync Communication:
+         Create a seperte thread to communicate with called-microservice. 
+         @EnableAsyc
+
+      RestTemplate: 
+         create a bean for restTemplate and setRetryInterceptor flow with waiting time.
+
+   Interceptor:
+      'In Spring Boot, an interceptor allows you to intercept requests before they reach the controller and responses before they are sent to the client.'
+      RetryInterceptor:
+         call called microservice if we get IOException then wait for 10 seconds inside infinite loop. 
+
+   KafkaListenser:
+      listen to topic "SKYLO" and expecting String message. 
+      consume message in concurrency with 1
+      then call called-microservice using seperate thread
+   
+   callOtherMicroservice:
+      RestTemplate call for called-microservice with URL and message 
+      URL= http://localhost:9096/service/called/api/retry?message=message;
+      
+
+Called-Microservice 
+   Create a microservice for accept post API call from Caller-microservice. 
+   URL: http://localhost:9096/service/called/api/retry?message=message
+   return "simple message about success call "
+
+
+

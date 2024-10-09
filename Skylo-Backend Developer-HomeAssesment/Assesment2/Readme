@@ -1,0 +1,14 @@
+
+create SQL Table in DB ...
+
+CREATE TABLE `skylo`.`sim_detail` (
+  `imsi` VARCHAR(45) NOT NULL,
+  `pin_1` VARCHAR(45) NULL,
+  `puk_1` VARCHAR(45) NULL,
+  `pin_2` VARCHAR(45) NULL,
+  `puk_2` VARCHAR(45) NULL,
+  `aam_1` VARCHAR(45) NULL,
+  `ki_umt_enc` VARCHAR(45) NULL,
+  `acc` VARCHAR(45) NULL,
+  UNIQUE INDEX `imsi_UNIQUE` (`imsi` ASC) VISIBLE,
+  PRIMARY KEY (`imsi`));

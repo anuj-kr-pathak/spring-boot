@@ -1,0 +1,19 @@
+spring.application.name: asses2
+input.file.path: src/main/resources/inputs
+output.file.path: src/main/resources/outputs
+spring:
+  batch:
+    jdbc:
+      initialize-schema: ALWAYS
+    job:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+spring.datasource.url: jdbc:mysql://127.0.0.1:3306/skylo
+spring.datasource.username:
+spring.datasource.password:
+spring.datasource.driver-class-name: com.mysql.cj.jdbc.Driver
+
+
